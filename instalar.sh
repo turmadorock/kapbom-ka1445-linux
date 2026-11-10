@@ -26,7 +26,7 @@ USB_URI=$(lpinfo --include-schemes usb -v 2>/dev/null | awk '/YICHIP/ {print $2;
 USB_URI=${USB_URI:-'usb://YICHIP/-Printer%20demo?serial=000000000004'}
 echo "URI: $USB_URI"
 lpadmin -x KA1445 2>/dev/null || true
-lpadmin -p KA1445 -E -v "$USB_URI" -P "$PPD" -D "Kapbom KA-1445 (cabo)" -o printer-is-shared=false 2>/dev/null
+lpadmin -p KA1445 -E -v "$USB_URI" -P "$PPD" -D "Kapbom KA-1445 (cabo)" -o printer-is-shared=false -o nopdfAutoRotate-default=true 2>/dev/null
 
 echo "== 3/5 Bluetooth =="
 MAC=${KA1445_MAC:-}
@@ -66,7 +66,7 @@ EOF
   fi
   lpadmin -x KA1445-BT 2>/dev/null || true
   lpadmin -p KA1445-BT -E -v "serial:/dev/rfcomm$RFCOMM?baud=115200" -P "$PPD" \
-          -D "Kapbom KA-1445 (Bluetooth)" -o printer-is-shared=false 2>/dev/null
+          -D "Kapbom KA-1445 (Bluetooth)" -o printer-is-shared=false -o nopdfAutoRotate-default=true 2>/dev/null
 else
   echo "KA-1445 não encontrada no Bluetooth: pulei esta parte."
   echo "Para instalar depois: ligue a impressora e rode de novo (ou KA1445_MAC=XX:XX:... sudo -E bash instalar.sh)."

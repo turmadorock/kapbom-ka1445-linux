@@ -11,6 +11,7 @@ Driver Linux (CUPS) para a **Kapbom KA-1445 "Mini Printer"**, uma mini impressor
 - **Qualidade máxima:** calor da cabeça em 220, o maior valor estável, testado no papel.
 - **Economia de papel:** corta o branco no começo e no fim, então um recibo curto gasta só o necessário.
 - Tons de cinza e logotipos em trama de pontos, com o texto nítido.
+- Sem rotação automática: um recibo "deitado" (mais largo que alto) sai sempre em pé.
 - Impressão pelo **cabo USB** (fila `KA1445`) e pelo **Bluetooth** (fila `KA1445-BT`).
 - Atalhos no menu do sistema: **Conectar KA-1445 Cabo** e **Conectar KA-1445 Bluetooth**.
 
