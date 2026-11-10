@@ -1,0 +1,98 @@
+*PPD-Adobe: "4.3"
+*FormatVersion: "4.3"
+*FileVersion: "1.0"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PCFileName: "KA1445.PPD"
+*Manufacturer: "Kapbom"
+*Product: "(KA-1445)"
+*ModelName: "Kapbom KA-1445"
+*ShortNickName: "Kapbom KA-1445"
+*NickName: "Kapbom KA-1445 Mini Printer 58mm"
+*1284DeviceID: "MFG:YICHIP;MDL:YC Printer demo;CLS:PRINTER;"
+*PSVersion: "(3010.000) 550"
+*LanguageLevel: "3"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*Throughput: "1"
+*LandscapeOrientation: Plus90
+*TTRasterizer: Type42
+*cupsVersion: 2.0
+*cupsModelNumber: 384
+*cupsManualCopies: True
+*cupsFilter: "application/vnd.cups-raster 100 rastertoka1445"
+*HWMargins: 0 0 0 0
+*OpenUI *PageSize/Tamanho do papel: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: R48x297
+*PageSize R48x297/Recibo 48 mm (corta o branco): "<</PageSize[136.3 842]/ImagingBBox null>>setpagedevice"
+*PageSize R48x50/48 x 50 mm: "<</PageSize[136.3 142]/ImagingBBox null>>setpagedevice"
+*PageSize R48x80/48 x 80 mm: "<</PageSize[136.3 227]/ImagingBBox null>>setpagedevice"
+*PageSize R48x100/48 x 100 mm: "<</PageSize[136.3 283]/ImagingBBox null>>setpagedevice"
+*PageSize R48x150/48 x 150 mm: "<</PageSize[136.3 425]/ImagingBBox null>>setpagedevice"
+*PageSize R48x200/48 x 200 mm: "<</PageSize[136.3 567]/ImagingBBox null>>setpagedevice"
+*PageSize R48x1000/Rolo 48 x 1000 mm: "<</PageSize[136.3 2835]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Tamanho do papel: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: R48x297
+*PageRegion R48x297/Recibo 48 mm (corta o branco): "<</PageSize[136.3 842]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x50/48 x 50 mm: "<</PageSize[136.3 142]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x80/48 x 80 mm: "<</PageSize[136.3 227]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x100/48 x 100 mm: "<</PageSize[136.3 283]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x150/48 x 150 mm: "<</PageSize[136.3 425]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x200/48 x 200 mm: "<</PageSize[136.3 567]/ImagingBBox null>>setpagedevice"
+*PageRegion R48x1000/Rolo 48 x 1000 mm: "<</PageSize[136.3 2835]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: R48x297
+*ImageableArea R48x297/Recibo 48 mm (corta o branco): "0 0 136.3 842"
+*ImageableArea R48x50/48 x 50 mm: "0 0 136.3 142"
+*ImageableArea R48x80/48 x 80 mm: "0 0 136.3 227"
+*ImageableArea R48x100/48 x 100 mm: "0 0 136.3 283"
+*ImageableArea R48x150/48 x 150 mm: "0 0 136.3 425"
+*ImageableArea R48x200/48 x 200 mm: "0 0 136.3 567"
+*ImageableArea R48x1000/Rolo 48 x 1000 mm: "0 0 136.3 2835"
+*DefaultPaperDimension: R48x297
+*PaperDimension R48x297/Recibo 48 mm (corta o branco): "136.3 842"
+*PaperDimension R48x50/48 x 50 mm: "136.3 142"
+*PaperDimension R48x80/48 x 80 mm: "136.3 227"
+*PaperDimension R48x100/48 x 100 mm: "136.3 283"
+*PaperDimension R48x150/48 x 150 mm: "136.3 425"
+*PaperDimension R48x200/48 x 200 mm: "136.3 567"
+*PaperDimension R48x1000/Rolo 48 x 1000 mm: "136.3 2835"
+*OpenUI *Resolution/Resolucao: PickOne
+*OrderDependency: 20 AnySetup *Resolution
+*DefaultResolution: 203dpi
+*Resolution 203dpi/203 dpi: "<</HWResolution[203 203]/cupsBitsPerColor 1/cupsColorOrder 0/cupsColorSpace 3>>setpagedevice"
+*CloseUI: *Resolution
+*OpenUI *Horizontal/Ajuste horizontal: PickOne
+*OrderDependency: 30 AnySetup *Horizontal
+*DefaultHorizontal: 0
+*Horizontal -5/-5 mm: ""
+*Horizontal -4/-4 mm: ""
+*Horizontal -3/-3 mm: ""
+*Horizontal -2/-2 mm: ""
+*Horizontal -1/-1 mm: ""
+*Horizontal 0/+0 mm: ""
+*Horizontal +1/+1 mm: ""
+*Horizontal +2/+2 mm: ""
+*Horizontal +3/+3 mm: ""
+*Horizontal +4/+4 mm: ""
+*Horizontal +5/+5 mm: ""
+*CloseUI: *Horizontal
+*OpenUI *SavePaper/Cortar branco no fim: PickOne
+*OrderDependency: 30 AnySetup *SavePaper
+*DefaultSavePaper: Yes
+*SavePaper Yes/Sim: ""
+*SavePaper No/Nao: ""
+*CloseUI: *SavePaper
+*OpenUI *Qualidade/Qualidade (calor da cabeca): PickOne
+*OrderDependency: 30 AnySetup *Qualidade
+*DefaultQualidade: Maximo
+*Qualidade Normal/Normal (padrao da impressora): ""
+*Qualidade Escuro/Escuro: ""
+*Qualidade Maximo/Maximo: ""
+*CloseUI: *Qualidade
+*DefaultFont: Courier
+*Font Courier: Standard "(002.004S)" Standard ROM

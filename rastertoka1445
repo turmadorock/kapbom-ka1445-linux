@@ -1,0 +1,175 @@
+#!/usr/bin/python3 -I
+# rastertoka1445 - filtro CUPS para Kapbom KA-1445 (térmica 58 mm, 203 dpi, cabeça de 384 pontos = 48 mm)
+# Lê CUPS raster (1 ou 8 bits, cinza) e envia ESC/POS "GS v 0" sempre na largura total da cabeça.
+#  - Centraliza a página na cabeça de 48 mm e aplica o deslocamento horizontal
+#    da opção Horizontal (-20..+20 mm), lida do trabalho ou do padrão da fila.
+#  - Remove linhas em branco no fim da página (opção SavePaper=No desliga isso).
+import os, sys, struct
+
+HEAD = 384                     # pontos na cabeça (48 mm a 203 dpi)
+HEAD_B = HEAD // 8
+DPMM = 203 / 25.4
+CHUNK = 128                    # linhas por bloco GS v 0
+TOP_KEEP = 16                  # mantém 2 mm de branco antes do conteúdo
+FULL = (1 << HEAD) - 1
+
+
+def log(m):
+    sys.stderr.write("DEBUG: rastertoka1445: %s\n" % m)
+
+
+def rd(f, n):
+    b = f.read(n)
+    return b if len(b) == n else None
+
+
+def pages(f):
+    sync = rd(f, 4)
+    if sync is None:
+        return
+    if sync in (b'RaS2', b'RaS3'):
+        end = '>'
+    elif sync in (b'2SaR', b'3SaR'):
+        end = '<'
+    else:
+        sys.stderr.write("ERROR: rastertoka1445: formato raster nao suportado %r\n" % sync)
+        sys.exit(1)
+    compressed = sync in (b'RaS2', b'2SaR')
+    while True:
+        hdr = rd(f, 1796)
+        if hdr is None:
+            return
+        u = lambda off: struct.unpack(end + 'I', hdr[off:off + 4])[0]
+        width, height = u(372), u(376)
+        bpp, bpl, cspace = u(388), u(392), u(400)
+        ints = [u(452 + 4 * i) for i in range(16)]
+        clear = 0xff if cspace in (0, 1, 18) else 0x00
+        rows = []
+        if not compressed:
+            for _ in range(height):
+                r = rd(f, bpl)
+                if r is None:
+                    return
+                rows.append(r)
+        else:
+            unit = max(1, bpp // 8)
+            while len(rows) < height:
+                rep = f.read(1)
+                if not rep:
+                    return
+                line = bytearray()
+                while len(line) < bpl:
+                    c = f.read(1)
+                    if not c:
+                        return
+                    c = c[0]
+                    if c == 128:
+                        line += bytes([clear]) * (bpl - len(line))
+                    elif c < 128:
+                        line += rd(f, unit) * (c + 1)
+                    else:
+                        line += rd(f, unit * (257 - c))
+                line = bytes(line[:bpl])
+                rows.extend([line] * min(rep[0] + 1, height - len(rows)))
+        yield width, bpp, cspace, ints, rows
+
+
+def black_int(row, width, bpp, cspace, y=0):
+    """Linha como inteiro de 'width' bits, bit mais alto = ponto 0, 1 = preto."""
+    white_is_one = cspace in (0, 18)          # W / sW
+    if bpp == 1:
+        v = int.from_bytes(row, 'big') >> (len(row) * 8 - width)
+        if white_is_one:
+            v ^= (1 << width) - 1
+        return v
+    if bpp == 8:
+        # pontilhado ordenado (Bayer 8x8): cinzas e fotos viram tramas, texto continua nítido
+        thr = BAYER[y % 8]
+        if not white_is_one:
+            row = bytes(255 - b for b in row[:width])
+        row = row[:width].translate(CONTRASTE)
+        bits = ''.join('1' if b < thr[x & 7] else '0' for x, b in enumerate(row))
+        return int(bits, 2) if bits else 0
+    sys.stderr.write("ERROR: rastertoka1445: %d bits por ponto nao suportado\n" % bpp)
+    sys.exit(1)
+
+
+_B = [[0, 32, 8, 40, 2, 34, 10, 42], [48, 16, 56, 24, 50, 18, 58, 26],
+      [12, 44, 4, 36, 14, 46, 6, 38], [60, 28, 52, 20, 62, 30, 54, 22],
+      [3, 35, 11, 43, 1, 33, 9, 41], [51, 19, 59, 27, 49, 17, 57, 25],
+      [15, 47, 7, 39, 13, 45, 5, 37], [63, 31, 55, 23, 61, 29, 53, 21]]
+BAYER = [[v * 4 + 2 for v in r] for r in _B]      # limiares 2..254
+# contraste: bordas suavizadas do texto viram preto/branco sólido, cinzas médios viram trama
+CONTRASTE = bytes(min(255, max(0, (v - 64) * 2)) for v in range(256))
+
+
+def place(v, width, shift):
+    """Põe a linha na cabeça começando no ponto 'shift' (negativo corta à esquerda)."""
+    e = HEAD - width - shift
+    v = v << e if e >= 0 else v >> -e
+    return (v & FULL).to_bytes(HEAD_B, 'big')
+
+
+CALOR = {'Normal': 0, 'Escuro': 160, 'Maximo': 220}
+
+
+def options():
+    """Opções: padrão gravado no PPD da fila (lpadmin -o) e, por cima, as do trabalho (lp -o)."""
+    opts = {'Horizontal': '0', 'SavePaper': 'Yes', 'Qualidade': 'Maximo'}
+    try:
+        for line in open(os.environ.get('PPD', ''), encoding='latin-1'):
+            for k in opts:
+                if line.startswith('*Default%s:' % k):
+                    opts[k] = line.split(':', 1)[1].strip()
+    except OSError:
+        pass
+    if len(sys.argv) > 5:
+        for item in sys.argv[5].split():
+            k, _, v = item.partition('=')
+            if k in opts and v:
+                opts[k] = v
+    try:
+        off = max(-20, min(20, int(opts['Horizontal'])))
+    except ValueError:
+        off = 0
+    calor = CALOR.get(opts['Qualidade'], CALOR['Maximo'])
+    return off, opts['SavePaper'].lower() not in ('no', 'false', 'nao'), calor
+
+
+def main():
+    out = sys.stdout.buffer
+    f = open(sys.argv[6], 'rb') if len(sys.argv) > 6 else sys.stdin.buffer
+    off_mm, save_paper, calor = options()
+    out.write(b'\x1b@')
+    if calor:
+        # ESC 7 n1 n2 n3: pontos aquecidos por vez, tempo de aquecimento, intervalo.
+        # Testado na KA-1445: 220 é o máximo seguro (240 e 255 fazem a impressora rejeitar o comando).
+        out.write(b'\x1b7\x07' + bytes([calor]) + b'\x02')
+    log("qualidade: calor %s" % (calor or 'padrao da impressora'))
+    n = 0
+    for width, bpp, cspace, ints, rows in pages(f):
+        n += 1
+        shift = (HEAD - width) // 2 + round(off_mm * DPMM)
+        log("pagina %d: %dx%d bpp=%d cspace=%d ajuste=%+d mm inicio=ponto %d"
+            % (n, width, len(rows), bpp, cspace, off_mm, shift))
+        lines = [place(black_int(r, width, bpp, cspace, y), width, shift) for y, r in enumerate(rows)]
+        if save_paper:
+            # recibo: corta o branco do fim e do começo (o CUPS encosta páginas curtas no pé)
+            while lines and not any(lines[-1]):
+                lines.pop()
+            top = 0
+            while top < len(lines) and not any(lines[top]):
+                top += 1
+            lines = lines[max(0, top - TOP_KEEP):]
+        for i in range(0, len(lines), CHUNK):
+            blk = lines[i:i + CHUNK]
+            out.write(b'\x1dv0\x00' + struct.pack('<HH', HEAD_B, len(blk)) + b''.join(blk))
+        out.write(b'\x1bJ\x28')            # ~5 mm entre páginas
+        out.flush()
+    out.write(b'\x1bd\x04')        # avanço final para destacar o papel
+    out.flush()
+    log("%d pagina(s) enviadas" % n)
+
+
+if __name__ == '__main__':
+    main()
