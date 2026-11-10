@@ -61,7 +61,7 @@
 *PaperDimension R48x150/48 x 150 mm: "136.3 425"
 *PaperDimension R48x200/48 x 200 mm: "136.3 567"
 *PaperDimension R48x1000/Rolo 48 x 1000 mm: "136.3 2835"
-*OpenUI *Resolution/Resolucao: PickOne
+*OpenUI *Resolution/Resolução: PickOne
 *OrderDependency: 20 AnySetup *Resolution
 *DefaultResolution: 203dpi
 *Resolution 203dpi/203 dpi: "<</HWResolution[203 203]/cupsBitsPerColor 1/cupsColorOrder 0/cupsColorSpace 3>>setpagedevice"
@@ -85,14 +85,14 @@
 *OrderDependency: 30 AnySetup *SavePaper
 *DefaultSavePaper: Yes
 *SavePaper Yes/Sim: ""
-*SavePaper No/Nao: ""
+*SavePaper No/Não: ""
 *CloseUI: *SavePaper
-*OpenUI *Qualidade/Qualidade (calor da cabeca): PickOne
+*OpenUI *Qualidade/Qualidade (calor da cabeça): PickOne
 *OrderDependency: 30 AnySetup *Qualidade
 *DefaultQualidade: Maximo
-*Qualidade Normal/Normal (padrao da impressora): ""
-*Qualidade Escuro/Escuro: ""
-*Qualidade Maximo/Maximo: ""
+*Qualidade Normal/Normal (padrão da impressora): ""
+*Qualidade Escuro/Escuro (calor 160): ""
+*Qualidade Maximo/Máximo (calor 220): ""
 *CloseUI: *Qualidade
 *DefaultFont: Courier
 *Font Courier: Standard "(002.004S)" Standard ROM

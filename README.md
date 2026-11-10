@@ -12,6 +12,7 @@ Driver Linux (CUPS) para a **Kapbom KA-1445 "Mini Printer"**, uma mini impressor
 - **Economia de papel:** corta o branco no começo e no fim, então um recibo curto gasta só o necessário.
 - Tons de cinza e logotipos em trama de pontos, com o texto nítido.
 - Sem rotação automática: um recibo "deitado" (mais largo que alto) sai sempre em pé.
+- Orientação, qualidade e conexão escolhidas no painel gráfico **Impressoras Térmicas**.
 - Impressão pelo **cabo USB** (fila `KA1445`) e pelo **Bluetooth** (fila `KA1445-BT`).
 - Atalhos no menu do sistema: **Conectar KA-1445 Cabo** e **Conectar KA-1445 Bluetooth**.
 
@@ -35,6 +36,22 @@ O instalador:
 5. Imprime o recibo de teste `testes/teste-KA-8.pdf`.
 
 Para remover tudo: `sudo bash desinstalar.sh`.
+
+## Painel gráfico
+
+O instalador coloca no menu o programa **Impressoras Térmicas**, que tem uma aba para cada impressora instalada (GENAI D80 e Kapbom KA-1445). Nele dá para:
+
+- ver se o cabo está ligado e qual impressora é a padrão;
+- trocar entre **CABO** e **BLUETOOTH** com um clique;
+- escolher **orientação**: automática, retrato, paisagem (90°), paisagem invertida (270°) ou retrato invertido (180°);
+- escolher **qualidade** (calor da cabeça), **tamanho do papel**, **ajuste horizontal** e **corte do papel em branco**;
+- imprimir a **página de teste** ou **qualquer arquivo** (PDF, imagem, texto).
+
+As escolhas valem para as duas filas, cabo e Bluetooth. Não pede senha: basta o usuário estar no grupo `lpadmin`, o padrão no Mint e no Ubuntu.
+
+Pelo terminal: `painel-impressoras` (ou `painel-impressoras d80` / `painel-impressoras ka1445` para abrir direto numa aba).
+
+A resolução é **203 dpi, fixa**: é o limite físico da cabeça e não muda por software. O que melhora a nitidez é o **calor**.
 
 ## Opções
 
@@ -68,6 +85,7 @@ lpadmin -p KA1445 -o Qualidade=Normal        # muda o padrão da fila
 | `kapbom-ka1445.ppd` | Descrição da impressora para o CUPS |
 | `instalar.sh` / `desinstalar.sh` | Instalação e remoção |
 | `conectar-ka1445-cabo.sh` / `conectar-ka1445-bluetooth.sh` | Trocar a impressora padrão entre cabo e Bluetooth |
+| `painel-impressoras.py` | Painel gráfico "Impressoras Térmicas" (GTK) |
 | `testes/teste-KA-8.pdf` | Recibo de teste |
 
 Veja também o projeto irmão [genai-d80-linux](https://github.com/turmadorock/genai-d80-linux), para a impressora térmica A4 GENAI D80.
